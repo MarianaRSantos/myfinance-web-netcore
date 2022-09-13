@@ -1,0 +1,130 @@
+<html>
+<head>
+<style>
+body {
+  background-color: lightgreen;
+}
+</style>
+</head>
+@using System.Globalization
+@model TransacaoModel
+
+@{
+    ViewData["Title"] = "Transações";
+}
+
+@{
+    var vData = "";
+    var vDescricao = "";
+    var vTipo = "";
+    var vValor = "";
+    var vId = 0;
+    var vPlanoContaId = 0;
+
+    try
+    {
+        vId = int.Parse(@ViewBag.Registro.Id.ToString());
+        vData = DateTime.Parse(@ViewBag.Registro.Data.ToString()).ToString("yyyy-MM-dd");
+        vPlanoContaId = int.Parse(@ViewBag.Registro.IdPlanoConta.ToString());
+        vDescricao = @ViewBag.Registro.Historico.ToString();
+        vTipo = @ViewBag.Registro.Tipo.ToString();
+
+        CultureInfo invC = CultureInfo.InvariantCulture;
+        string value;
+        value = @ViewBag.Registro.Valor.ToString(invC);
+        vValor = value;
+    }
+    catch { }
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-controller="Transacao" asp-action="CriarTransacao">
+    <fieldset>
+        <input type="hidden" asp-for="Id">
+
+        <div class="form-group mb-2">
+            <legend class="mt-2">Data:</legend>
+            <input type="date" class="form-control" asp-for="Data" value="@vData">
+            <span asp-validation-for="Data" class="text-danger"></span>
+        </div>
+
+        <legend class="mt-2">Tipo: </legend>
+        @{
+            if (vTipo == "D")
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="Tipo" id="Tipo" value="R" asp-for="Tipo">
+                    <label class="form-check-label" for="Tipo">
+                        Receita
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="Tipo" id="Tipo" value="D" checked="checked"
+                asp-for="Tipo">
+                    <label class="form-check-label" for="Tipo">
+                        Despesa
+                    </label>
+                </div>
+            }
+            else
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="Tipo" id="Tipo" value="R" checked="checked"
+                asp-for="Tipo">
+                    <label class="form-check-label" for="Tipo">
+                        Receita
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="Tipo" id="Tipo" value="D" asp-for="Tipo">
+                    <label class="form-check-label" for="Tipo">
+                        Despesa
+                    </label>
+                </div>
+            }
+        }
+
+        <div class="form-group mb-2">
+            <legend class="mt-2">Valor:</legend>
+            <input type="text" class="form-control" asp-for="Valor" step="0.01" value="@vValor">
+            <span asp-validation-for="Valor" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-2">
+            <legend class="mt-2">Histórico:</legend>
+            @Html.TextArea("Historico", vDescricao, new { @class = "form-control" })
+            <span asp-validation-for="Historico" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-2">
+            <legend class="mt-2">Plano de Contas:</legend>
+            <select asp-for="IdPlanoConta" class="form-control">
+                @{
+                    foreach (var item in (List<PlanoContaModel>)ViewBag.ListaPlanoContas)
+                    {
+                        if (item.Id.ToString() == vPlanoContaId.ToString())
+                        {
+                            <option selected value="@item.Id.ToString()">@item.Descricao.ToString()</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Id.ToString()">@item.Descricao.ToString()</option>
+                        }
+                    }
+
+                }
+            </select>
+        </div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-block btn-success">Salvar</button>
+    <button type="button" class="btn btn-block btn-secondary" onclick="Voltar()">Cancelar</button>
+
+</form>
+
+<script>
+    function Voltar() {
+        window.location.href = "/Transacao";
+    }
+</script>

@@ -1,0 +1,92 @@
+﻿<html>
+<head>
+<style>
+body {
+  background-color: lightgreen;
+}
+</style>
+</head>
+
+@{
+    ViewData["Title"] = "Plano Contas";
+}
+
+<h3>Plano de Contas</h3>
+<hr>
+<button type="button" class="btn btn-block btn-primary" onclick="CriarPlanoConta()">Criar Plano de Conta</button>
+
+<hr>
+<table class='table table-bordered'>
+  <tr>
+    <th>Id</th>
+    <th>Descrição</th>
+    <th>Tipo</th>
+    <th>Edição</th>
+    <th>Exclusão</th>
+  </tr>
+
+  @{
+        foreach (var item in (List<PlanoContaModel>)ViewBag.Lista)
+        {
+            <tr>
+
+                <td>@item.Id</td>
+                <td>@item.Descricao</td>
+                <td>@item.Tipo</td>
+                <td>
+                    <button type='button' class='btn btn-block btn-warning'
+                    onclick="EditarPlanoConta(@item.Id.ToString())">Editar</button>
+                </td>
+                <td>
+                    <button type='button' id="idPlanoConta" class='btn btn-block btn-danger'
+                    onclick="AbrirModal(@item.Id.ToString())">Excluir</button>
+                </td>
+            </tr>
+
+            <div class="modal fade" id=@("modalPlanoConta" + @item.Id.ToString()) tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Confirmação</h5>
+                        </div>
+                        <div class="modal-body">
+                            Deseja realmente excluir este plano de conta?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="excluir" name="excluir" class="btn btn-danger"
+                            onclick="ExcluirPlanoConta(@item.Id.ToString())">Excluir</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                            onclick="FecharModal(@item.Id.ToString())">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+</table>
+
+<script>
+    function CriarPlanoConta() {
+        window.location.href = "../PlanoConta/CriarPlanoConta";
+    }
+
+    function EditarPlanoConta(id) {
+        window.location.href = "../PlanoConta/CriarPlanoConta/" + id;
+
+    }
+
+    function ExcluirPlanoConta(id) {
+        window.location.href = "../PlanoConta/ExcluirPlanoConta/" + id;
+    }
+
+    function AbrirModal(id) {
+        $('#modalPlanoConta' + id).modal('show');
+    }
+
+    function FecharModal(id) {
+        $('#modalPlanoConta' + id).modal('hide');
+    }
+
+</script>
